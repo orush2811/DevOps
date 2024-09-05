@@ -1,0 +1,28 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"sumArray.C": "cpp",
+			"minMax.C": "cpp",
+			"updateAverage.C": "cpp",
+			"Challenge #9.C": "cpp",
+			"createArrayFunction.C": "cpp",
+			"recursivePalindrom.C": "cpp",
+			"maxSum.C": "cpp",
+			"printBothSides.C": "cpp",
+			"ReturnAvgVal.C": "cpp",
+			"findFloat.C": "cpp",
+			"printInBinary.C": "cpp",
+			"ArrayO(n).C": "cpp",
+			"test.C": "cpp",
+			"Asignment2.C": "cpp",
+			"Assignment2-solution.C": "cpp",
+			"NewArrNoDup.C": "cpp",
+			"oddOrEven.C": "cpp"
+		}
+	}
+}
