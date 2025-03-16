@@ -2,11 +2,11 @@ from flask import Flask, request, jsonify
 from weather import get_weather, clothing_suggestion
 
 app = Flask(__name__)
-API_KEY = "your_openweathermap_api_key_here"
+API_KEY = "ad1cad1d990490bb4b9efc6469e2f503"
 
 @app.route('/clothing', methods=['GET'])
 def get_clothing_advice():
-    city = request.args.get('city', 'London')
+    city = request.args.get('city', 'Tel-Aviv')
     weather = get_weather(city, API_KEY)
     if weather:
         suggestion = clothing_suggestion(weather["temp"], weather["humidity"], weather["wind_speed"])
