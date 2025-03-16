@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from weather import get_weather, clothing_suggestion
 
 app = Flask(__name__)
-API_KEY = "ad1cad1d990490bb4b9efc6469e2f503"
+API_KEY = "put_API_key_here"
 
 @app.route('/clothing', methods=['GET'])
 def get_clothing_advice():
