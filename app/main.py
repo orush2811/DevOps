@@ -1,62 +1,110 @@
-from flask import Flask, request, jsonify, render_template
-from weather import get_current_weather, get_week_forecast, clothing_suggestion
-from datetime import datetime
+from flask import Flask, request, render_template
+import requests
+import os
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
-API_KEY = "ad1cad1d990490bb4b9efc6469e2f503"
 
-@app.route('/clothing', methods=['GET'])
-def get_clothing_advice_api():
-    city = request.args.get('city')
-    if not city:
-        return jsonify({"error": "Please provide a city"}), 400
-    current_weather = get_current_weather(city, API_KEY)
-    if not current_weather:
-        return jsonify({"error": "Could not fetch current weather data"}), 503
-    week_forecast = get_week_forecast(city, API_KEY)
-    if not week_forecast:
-        return jsonify({"error": "Could not fetch forecast data"}), 503
-    current_suggestion = clothing_suggestion(current_weather["temp"], current_weather["humidity"], current_weather["wind_speed"])
-    forecast_suggestions = {
-        date.strftime("%Y-%m-%d"): {
-            **data,
-            "clothing_suggestion": clothing_suggestion(data["temp"], data["humidity"], data["wind_speed"])
-        } for date, data in week_forecast.items()
-    }
-    return jsonify({
-        "city": city,
-        "current": {**current_weather, "clothing_suggestion": current_suggestion},
-        "forecast": forecast_suggestions
-    })
+API_KEY = "ad1cad1d990490bb4b9efc6469e2f503"  # Your API key
+BASE_URL = "http://api.openweathermap.org/data/2.5/forecast"
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    city = request.form.get('city') if request.method == 'POST' else request.args.get('city', 'London')
-    error = None
-    data = {"city": city, "current": None, "forecast": {}}
+def get_weather_forecast(location):
+    params = {"q": location, "appid": API_KEY, "units": "metric"}
+    print(f"Using API Key: {API_KEY}")  # Debug line
+    response = requests.get(BASE_URL, params=params)
+    if response.status_code == 200:
+        return response.json()
+    print(f"API call failed with status: {response.status_code}")  # Debug line
+    return None
 
-    current_weather = get_current_weather(city, API_KEY)
-    if not current_weather:
-        error = "Could not fetch current weather data."
+def suggest_clothes(temp, humidity, wind_speed, rain, clouds, description):
+    suggestion = []
+    # Temperature
+    if temp < 5:
+        suggestion.append("Wear a heavy coat, scarf, and gloves.")
+    elif 5 <= temp <= 15:
+        suggestion.append("A jacket and long pants are recommended.")
     else:
-        data["current"] = {
-            **current_weather,
-            "clothing_suggestion": clothing_suggestion(current_weather["temp"], current_weather["humidity"], current_weather["wind_speed"])
-        }
+        suggestion.append("A t-shirt or light sweater is fine.")
+    
+    # Humidity
+    if humidity > 80:
+        suggestion.append("High humidity—consider waterproof clothing or an umbrella.")
+    elif humidity < 30:
+        suggestion.append("Low humidity—moisturizer might help your skin!")
+    
+    # Wind Speed
+    if wind_speed > 10:
+        suggestion.append("Windy—add a windbreaker or hat.")
+    
+    # Rain (precipitation in mm over 3 hours)
+    if rain > 0:
+        if rain > 5:
+            suggestion.append("Heavy rain expected—bring a raincoat and waterproof shoes.")
+        else:
+            suggestion.append("Light rain possible—carry an umbrella.")
+    
+    # Cloudiness
+    if clouds > 80:
+        suggestion.append("Very cloudy—might feel cooler than it is.")
+    elif clouds < 20:
+        suggestion.append("Mostly clear—sunglasses could be handy.")
+    
+    # Weather Description (e.g., "light rain", "snow")
+    if "snow" in description.lower():
+        suggestion.append("Snow expected—wear insulated boots and layers.")
+    elif "thunderstorm" in description.lower():
+        suggestion.append("Thunderstorm possible—stay cautious and dry.")
+    
+    return " ".join(suggestion) if suggestion else "No specific suggestions—just dress comfortably!"
 
-    week_forecast = get_week_forecast(city, API_KEY)
-    if not week_forecast:
-        if not error:
-            error = "Could not fetch forecast data."
-    else:
-        data["forecast"] = {
-            date.strftime("%Y-%m-%d"): {
-                **data,
-                "clothing_suggestion": clothing_suggestion(data["temp"], data["humidity"], data["wind_speed"])
-            } for date, data in week_forecast.items()
-        }
+def process_forecast(data):
+    forecast_list = data["list"]
+    daily_forecasts = []
+    today = datetime.now().date()
+    
+    for i in range(5):  # Next 5 days
+        target_date = today + timedelta(days=i)
+        target_date_str = target_date.strftime("%Y-%m-%d")
+        
+        for forecast in forecast_list:
+            forecast_time = forecast["dt_txt"]
+            if target_date_str in forecast_time and "12:00:00" in forecast_time:
+                temp = forecast["main"]["temp"]
+                humidity = forecast["main"]["humidity"]
+                wind_speed = forecast["wind"]["speed"]
+                rain = forecast.get("rain", {}).get("3h", 0)  # Rain in mm over 3 hours, default 0
+                clouds = forecast["clouds"]["all"]  # Cloudiness in %
+                description = forecast["weather"][0]["description"]  # e.g., "light rain"
+                icon = forecast["weather"][0]["icon"]  # Icon code (e.g., "10d")
+                suggestion = suggest_clothes(temp, humidity, wind_speed, rain, clouds, description)
+                
+                daily_forecasts.append({
+                    "date": target_date_str,
+                    "temp": temp,
+                    "humidity": humidity,
+                    "wind_speed": wind_speed,
+                    "rain": rain,
+                    "clouds": clouds,
+                    "description": description,
+                    "icon": f"http://openweathermap.org/img/wn/{icon}@2x.png",  # Icon URL
+                    "suggestion": suggestion
+                })
+                break
+    
+    return daily_forecasts
 
-    return render_template('index.html', data=data, error=error)
+@app.route("/", methods=["GET", "POST"])
+def home():
+    forecast_data = None
+    location = "London"  # Default location
+    if request.method == "POST":
+        location = request.form.get("location", "London")
+        print(f"Form submitted with location: {location}")  # Debug line
+        weather_data = get_weather_forecast(location)
+        if weather_data:
+            forecast_data = process_forecast(weather_data)
+    return render_template("index.html", forecast_data=forecast_data, location=location)
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080, debug=True)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8080)
