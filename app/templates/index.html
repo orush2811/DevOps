@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weather Clothing Suggestions</title>
+    <style>
+        body { font-family: Arial; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Weather Clothing Suggestions</h1>
+    <form method="POST">
+        <input type="text" name="city" value="{{ data.city }}">
+        <button type="submit">Get Suggestions</button>
+    </form>
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+    {% if data.current %}
+        <h2>Current Weather in {{ data.city }}</h2>
+        <p>Temperature: {{ data.current.temp }}°C</p>
+        <p>Humidity: {{ data.current.humidity }}%</p>
+        <p>Wind Speed: {{ data.current.wind_speed }} m/s</p>
+        <p>Clothing: {{ data.current.clothing_suggestion }}</p>
+    {% endif %}
+    {% if data.forecast %}
+        <h2>Forecast</h2>
+        {% for date, forecast in data.forecast.items() %}
+            <p>{{ date }}: {{ forecast.temp }}°C, {{ forecast.clothing_suggestion }}</p>
+        {% endfor %}
+    {% endif %}
+</body>
+</html>

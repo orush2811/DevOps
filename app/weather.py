@@ -1,16 +1,39 @@
 import requests
+from datetime import datetime
+from requests.exceptions import RequestException
 
-def get_weather(city, api_key):
-    url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric"
-    response = requests.get(url)
-    if response.status_code == 200:
+def get_current_weather(city, api_key):
+    try:
+        url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric"
+        response = requests.get(url, timeout=5)
+        response.raise_for_status()
         data = response.json()
         return {
             "temp": data["main"]["temp"],
             "humidity": data["main"]["humidity"],
-            "wind_speed": data["wind"]["speed"] 
+            "wind_speed": data["wind"]["speed"]
         }
-    return None
+    except RequestException:
+        return None
+
+def get_week_forecast(city, api_key):
+    try:
+        url = f"http://api.openweathermap.org/data/2.5/forecast?q={city}&appid={api_key}&units=metric"
+        response = requests.get(url, timeout=5)
+        response.raise_for_status()
+        data = response.json()
+        daily_forecasts = {}
+        for forecast in data["list"]:
+            date = datetime.fromtimestamp(forecast["dt"]).date()
+            if date not in daily_forecasts:
+                daily_forecasts[date] = {
+                    "temp": forecast["main"]["temp"],
+                    "humidity": forecast["main"]["humidity"],
+                    "wind_speed": forecast["wind"]["speed"]
+                }
+        return daily_forecasts
+    except RequestException:
+        return None
 
 def clothing_suggestion(temp, humidity, wind_speed):
     base_suggestion = ""
