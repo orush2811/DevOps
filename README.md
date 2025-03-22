@@ -139,18 +139,18 @@ kubectl get svc weather-app-service
 ```
 # **Project Structure**
 
-weather-clothes-app/
-├── app.py            # Flask app with weather API integration
-├── logic.py          # Clothing suggestion logic (optional separation)
-├── requirements.txt  # Python dependencies
-├── templates/
-│   └── index.html    # HTML frontend
-├── Dockerfile        # Docker configuration
-├── k8s/
-│   ├── deployment.yaml  # Kubernetes deployment
-│   └── service.yaml     # Kubernetes service
-└── terraform/
-    └── main.tf       # Terraform config for AWS EKS
+- weather-clothes-app/
+  - app.py - Flask app with weather API integration
+  - logic.py - Clothing suggestion logic (optional separation)
+  - requirements.txt - Python dependencies
+  - templates/
+    - index.html - HTML frontend
+  - Dockerfile - Docker configuration
+  - k8s/
+    - deployment.yaml - Kubernetes deployment
+    - service.yaml - Kubernetes service
+  - terraform/
+    - main.tf - Terraform config for AWS EKS
 
 # **Usage**
 Open the app in your browser (e.g., http://localhost:5000 locally).
