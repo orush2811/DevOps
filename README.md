@@ -52,54 +52,62 @@ AWS CLI (if deploying to EKS)
 An OpenWeatherMap API key (free tier available)
 ```
 Setup Instructions
-1. Clone the Repository
-bash
+1. Clone the Repositor
 ```
+bash
+
 git clone https://github.com/yourusername/weather-clothes-app.git
 cd weather-clothes-app
 ```
 2. Install Dependencies
-bash
 ```
-pip install -r requirements.txt
+bash
 
+pip install -r requirements.txt
+```
 3. Get an API Key
 Sign up at OpenWeatherMap.
-```
+
 Copy your API key and set it as an environment variable:
+```
 bash
 
 export WEATHER_API_KEY="your_api_key_here"
-
+```
 4. Run Locally (Flask)
+```
 bash
 
 python app.py
 
 Open http://localhost:5000 in your browser.
-
+```
 5. Dockerize the App
+```
 bash
 
 docker build -t weather-clothes-app:latest .
 docker run -p 5000:5000 -e WEATHER_API_KEY="your_api_key_here" weather-clothes-app
-
+```
 6. Deploy with Kubernetes (Local)
 Start Minikube:
+```
 bash
 
 minikube start
-
+```
 Apply Kubernetes manifests:
+```
 bash
 
 kubectl apply -f k8s/deployment.yaml -f k8s/service.yaml
-
+```
 Access the app:
+```
 bash
 
 minikube service weather-app-service --url
-
+```
 7. Deploy to AWS EKS (Cloud)
 Configure AWS CLI with your credentials.
 
