@@ -153,7 +153,7 @@ kubectl get svc weather-app-service
     - main.tf - Terraform config for AWS EKS
 
 # **Usage**
-Open the app in your browser (e.g., http://localhost:5000 locally).
+Open the app in your browser (e.g., http://localhost:8080 locally).
 
 Enter a city name (e.g., "New York") in the form.
 
