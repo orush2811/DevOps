@@ -51,8 +51,8 @@ AWS CLI (if deploying to EKS)
 
 An OpenWeatherMap API key (free tier available)
 ```
-#**Setup Instructions**
-1. ## **Clone the Repositor**
+# **Setup Instructions**
+1. ## **Clone the Repository**
 ```
 bash
 
