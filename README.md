@@ -54,14 +54,12 @@ An OpenWeatherMap API key (free tier available)
 # **Setup Instructions**
 1. ## **Clone the Repository**
 ```
-bash
 
 git clone https://github.com/yourusername/weather-clothes-app.git
 cd weather-clothes-app
 ```
 2. ## **Install Dependencies**
 ```
-bash
 
 pip install -r requirements.txt
 ```
@@ -70,13 +68,11 @@ Sign up at OpenWeatherMap.
 
 Copy your API key and set it as an environment variable:
 ```
-bash
 
 export WEATHER_API_KEY="your_api_key_here"
 ```
 4. ## **Run Locally (Flask)**
 ```
-bash
 
 python app.py
 
@@ -84,7 +80,6 @@ Open http://localhost:5000 in your browser.
 ```
 5. ## **Dockerize the App**
 ```
-bash
 
 docker build -t weather-clothes-app:latest .
 docker run -p 5000:5000 -e WEATHER_API_KEY="your_api_key_here" weather-clothes-app
@@ -92,19 +87,16 @@ docker run -p 5000:5000 -e WEATHER_API_KEY="your_api_key_here" weather-clothes-a
 6. ## **Deploy with Kubernetes (Local)**
 ### **Start Minikube:**
 ```
-bash
 
 minikube start
 ```
 ### **Apply Kubernetes manifests:**
 ```
-bash
 
 kubectl apply -f k8s/deployment.yaml -f k8s/service.yaml
 ```
 ### **Access the app:**
 ```
-bash
 
 minikube service weather-app-service --url
 ```
@@ -113,7 +105,6 @@ minikube service weather-app-service --url
 
 ### **Initialize Terraform:**
 ```
-bash
 
 cd terraform
 terraform init
@@ -121,19 +112,16 @@ terraform apply
 ```
 ### **Update kubectl to use the EKS cluster:**
 ```
-bash
 
 aws eks update-kubeconfig --name weather-app-cluster --region us-east-1
 ```
 ### **Deploy the app:**
 ```
-bash
 
 kubectl apply -f ../k8s/
 ```
 ### **Get the external IP from the service:**
 ```
-bash
 
 kubectl get svc weather-app-service
 ```
