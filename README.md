@@ -26,6 +26,7 @@ Web Interface: Simple Flask-based UI for entering a location and viewing suggest
 Cloud-Ready: Deployable on Kubernetes with Docker containers and Terraform-provisioned infrastructure (e.g., AWS EKS).
 
 Tech Stack
+```
 Backend: Python 3.9, Flask
 
 Containerization: Docker
@@ -35,8 +36,9 @@ Orchestration: Kubernetes
 Infrastructure: Terraform (AWS EKS example)
 
 API: OpenWeatherMap
-
+```
 Prerequisites
+```
 Python 3.9+
 
 Docker
@@ -48,22 +50,22 @@ Terraform
 AWS CLI (if deploying to EKS)
 
 An OpenWeatherMap API key (free tier available)
-
+```
 Setup Instructions
 1. Clone the Repository
 bash
-
+```
 git clone https://github.com/yourusername/weather-clothes-app.git
 cd weather-clothes-app
-
+```
 2. Install Dependencies
 bash
-
+```
 pip install -r requirements.txt
 
 3. Get an API Key
 Sign up at OpenWeatherMap.
-
+```
 Copy your API key and set it as an environment variable:
 bash
 
