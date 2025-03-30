@@ -1,5 +1,5 @@
 # **Weather-Based Clothing Suggester**
-A web application that suggests what to wear based on the current weather conditions (temperature, humidity, wind speed) at your location. Built with Python/Flask, containerized with Docker, orchestrated with Kubernetes, and provisioned using Terraform.
+A web application that suggests what to wear based on the current weather conditions (temperature, humidity, wind speed) at your location. Built with Python/Flask, containerized with Docker, orchestrated with Kubernetes, and provisioned using Terraform(currently running locally)
 # **Overview**
 This project is a practical microservices-based application that:
 Detects your location (via manual input or IP-based geolocation in future iterations).
