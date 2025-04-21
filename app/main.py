@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
-API_KEY = "API-KEY"  # Your API key
+API_KEY = "API_KEY"  # Your API key
 BASE_URL = "http://api.openweathermap.org/data/2.5/forecast"
 
 def get_weather_forecast(location):
