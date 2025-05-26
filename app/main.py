@@ -2,20 +2,37 @@ from flask import Flask, request, render_template
 import requests
 import os
 from datetime import datetime, timedelta
+from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
+from flask_debugtoolbar import DebugToolbarExtension
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 app = Flask(__name__)
+app.debug = True
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key')
+toolbar = DebugToolbarExtension(app)
 
-API_KEY = "API_KEY"  # Your API key
+# Prometheus metrics
+WEATHER_REQUESTS = Counter('weather_requests_total', 'Total weather API requests', ['location'])
+WEATHER_REQUEST_LATENCY = Histogram('weather_request_duration_seconds', 'Weather API request duration')
+API_ERRORS = Counter('weather_api_errors_total', 'Total weather API errors')
+
+API_KEY = os.getenv("WEATHER_API_KEY", "API_KEY")  # Your API key
 BASE_URL = "http://api.openweathermap.org/data/2.5/forecast"
 
 def get_weather_forecast(location):
-    params = {"q": location, "appid": API_KEY, "units": "metric"}
-    print(f"Using API Key: {API_KEY}")  # Debug line
-    response = requests.get(BASE_URL, params=params)
-    if response.status_code == 200:
-        return response.json()
-    print(f"API call failed with status: {response.status_code}")  # Debug line
-    return None
+    WEATHER_REQUESTS.labels(location=location).inc()
+    with WEATHER_REQUEST_LATENCY.time():
+        params = {"q": location, "appid": API_KEY, "units": "metric"}
+        print(f"Using API Key: {API_KEY}")  # Debug line
+        response = requests.get(BASE_URL, params=params)
+        if response.status_code == 200:
+            return response.json()
+        API_ERRORS.inc()
+        print(f"API call failed with status: {response.status_code}")  # Debug line
+        return None
 
 def suggest_clothes(temp, humidity, wind_speed, rain, clouds, description):
     suggestion = []
@@ -106,5 +123,9 @@ def home():
             forecast_data = process_forecast(weather_data)
     return render_template("index.html", forecast_data=forecast_data, location=location)
 
+@app.route("/metrics")
+def metrics():
+    return generate_latest(), 200, {'Content-Type': CONTENT_TYPE_LATEST}
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080)
+    app.run(host="0.0.0.0", port=8080, debug=True)
