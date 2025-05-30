@@ -1,29 +1,103 @@
 # **Weather-Based Clothing Suggester**
-A web application that suggests what to wear based on the current weather conditions (temperature, humidity, wind speed) at your location. Built with Python/Flask, containerized with Docker, orchestrated with Kubernetes, and provisioned using Terraform(currently running locally)
+A web application that suggests what to wear based on the current weather conditions (temperature, humidity, wind speed) at your location. Built with Python/Flask, containerized with Docker, orchestrated with Kubernetes, and provisioned using Terraform (currently running locally).
+
 # **Overview**
 This project is a practical microservices-based application that:
-Detects your location (via manual input or IP-based geolocation in future iterations).
+- Detects your location (via manual input or IP-based geolocation in future iterations)
+- Fetches current weather data for that location
+- Analyzes weather conditions
+- Suggests appropriate clothing
+- Includes real-time code updates and monitoring capabilities
 
-Fetches real-time weather data using the OpenWeatherMap API.
+# **Features**
+- Weather-based clothing suggestions
+- 5-day weather forecast
+- Real-time code updates (hot reloading)
+- Monitoring with Prometheus and Grafana
+- Metrics collection for:
+  - Weather API requests
+  - API latency
+  - Error rates
 
-Provides clothing recommendations tailored to temperature, humidity, and wind speed.
+# **Prerequisites**
+- Docker and Docker Compose
+- OpenWeather API key (sign up at https://openweathermap.org/api)
 
-Runs as a scalable, cloud-native app deployable on Kubernetes clusters.
+# **Setup Instructions**
 
-Perfect for developers learning Flask, Docker, Kubernetes, and Terraform, or anyone who wants a handy tool to decide their daily outfit!
-Features
-Weather Integration: Pulls current weather data (temperature, humidity, wind speed) for any location.
+1. Clone the repository:
+```bash
+git clone [repository-url]
+cd weather-application
+```
 
-Smart Suggestions: Clothing recommendations based on:
-Temperature (e.g., heavy coat below 5°C, t-shirt above 15°C).
+2. Create a `.env` file in the `app` directory with your API credentials:
+```bash
+WEATHER_API_KEY=your_api_key_here
+SECRET_KEY=your_secret_key_here
+FLASK_ENV=development
+FLASK_DEBUG=1
+```
 
-Humidity (e.g., waterproof gear if >80%).
+3. Build and start the containers:
+```bash
+docker-compose up --build
+```
 
-Wind speed (e.g., windbreaker if >10 m/s).
+# **Accessing the Services**
 
-Web Interface: Simple Flask-based UI for entering a location and viewing suggestions.
+- Weather Application: http://localhost:8080
+- Prometheus: http://localhost:9090
+- Grafana: http://localhost:3000
+  - Default login: admin/admin
 
-Cloud-Ready: Deployable on Kubernetes with Docker containers and Terraform-provisioned infrastructure (e.g., AWS EKS).
+# **Development with Hot Reloading**
+
+The application is configured with hot reloading enabled. Any changes made to the Python files in the `app` directory will be automatically detected and the application will reload with your changes. This allows for rapid development and testing.
+
+# **Monitoring with Grafana and Prometheus**
+
+The application includes built-in monitoring capabilities:
+
+1. **Metrics Available:**
+   - Total weather requests (`weather_requests_total`)
+   - API request latency (`weather_request_duration_seconds`)
+   - API errors (`weather_api_errors_total`)
+
+2. **Setting up Grafana:**
+   - Access Grafana at http://localhost:3000
+   - Log in with username: `admin`, password: `admin`
+   - Add Prometheus as a data source:
+     - URL: http://prometheus:9090
+     - Access: Browser
+
+3. **Viewing Metrics:**
+   - Create new dashboards in Grafana to visualize:
+     - Request rates
+     - Response times
+     - Error rates
+     - API usage patterns
+
+# **Architecture**
+
+The application runs three main services:
+1. **Flask Application (Port 8080)**
+   - Handles weather data fetching and clothing suggestions
+   - Implements hot reloading for development
+   - Exposes metrics endpoint for Prometheus
+
+2. **Prometheus (Port 9090)**
+   - Collects and stores metrics
+   - Provides query interface for Grafana
+
+3. **Grafana (Port 3000)**
+   - Visualizes metrics from Prometheus
+   - Provides customizable dashboards
+   - Supports alerting capabilities
+
+# **Contributing**
+
+Feel free to submit issues, fork the repository, and create pull requests for any improvements.
 
 # **Tech Stack**
 ```
@@ -36,94 +110,6 @@ Orchestration: Kubernetes
 Infrastructure: Terraform (AWS EKS example)
 
 API: OpenWeatherMap
-```
-# **Prerequisites**
-```
-Python 3.9+
-
-Docker
-
-Kubernetes (e.g., Minikube for local testing)
-
-Terraform
-
-AWS CLI (if deploying to EKS)
-
-An OpenWeatherMap API key (free tier available)
-```
-# **Setup Instructions**
-1. ## **Clone the Repository**
-```
-
-git clone https://github.com/yourusername/weather-clothes-app.git
-cd weather-clothes-app
-```
-2. ## **Install Dependencies**
-```
-
-pip install -r requirements.txt
-```
-3. ## **Get an API Key**
-Sign up at OpenWeatherMap.
-
-Copy your API key and set it as an environment variable:
-```
-
-export WEATHER_API_KEY="your_api_key_here"
-```
-4. ## **Run Locally (Flask)**
-```
-
-python app.py
-
-Open http://localhost:5000 in your browser.
-```
-5. ## **Dockerize the App**
-```
-
-docker build -t weather-clothes-app:latest .
-docker run -p 5000:5000 -e WEATHER_API_KEY="your_api_key_here" weather-clothes-app
-```
-6. ## **Deploy with Kubernetes (Local)**
-### **Start Minikube:**
-```
-
-minikube start
-```
-### **Apply Kubernetes manifests:**
-```
-
-kubectl apply -f k8s/deployment.yaml -f k8s/service.yaml
-```
-### **Access the app:**
-```
-
-minikube service weather-app-service --url
-```
-7. ## **Deploy to AWS EKS (Cloud)**
-### **Configure AWS CLI with your credentials.**
-
-### **Initialize Terraform:**
-```
-
-cd terraform
-terraform init
-terraform apply
-```
-### **Update kubectl to use the EKS cluster:**
-```
-
-aws eks update-kubeconfig --name weather-app-cluster --region us-east-1
-```
-### **Deploy the app:**
-```
-
-kubectl apply -f ../k8s/
-```
-### **Get the external IP from the service:**
-```
-
-kubectl get svc weather-app-service
 ```
 # **Project Structure**
 
@@ -161,8 +147,6 @@ Improve UI with CSS or a frontend framework (e.g., React).
 
 Store API keys securely with Kubernetes Secrets or AWS Secrets Manager.
 
-# **Contributing**
-Feel free to fork this repo, submit issues, or send pull requests! Contributions are welcome.
-License
+# **License**
 This project is licensed under the MIT License—see the LICENSE file for details.
 
