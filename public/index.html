@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Budget Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #e7f5e7;
+            color: #2e7d32;
+        }
+        .warning {
+            background-color: #fff3e0;
+            color: #ef6c00;
+        }
+        .amount {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        .expense-category {
+            margin-top: 25px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+        .expense-category h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Simple Budget Calculator</h1>
+        <form id="budgetForm">
+            <div class="form-group">
+                <label for="salary">Monthly Salary (₪)</label>
+                <input type="number" id="salary" required min="0" step="0.01">
+            </div>
+            
+            <div class="expense-category">
+                <h3>Housing Expenses</h3>
+                <div class="form-group">
+                    <label for="rent">Rent (₪)</label>
+                    <input type="number" id="rent" required min="0" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="houseCommittee">House Committee (₪)</label>
+                    <input type="number" id="houseCommittee" required min="0" step="0.01">
+                </div>
+            </div>
+
+            <div class="expense-category">
+                <h3>Utilities</h3>
+                <div class="form-group">
+                    <label for="electricity">Electricity (₪)</label>
+                    <input type="number" id="electricity" required min="0" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="water">Water (₪)</label>
+                    <input type="number" id="water" required min="0" step="0.01">
+                </div>
+            </div>
+
+            <div class="expense-category">
+                <h3>Other Expenses</h3>
+                <div class="form-group">
+                    <label for="councilTax">Council Tax (₪)</label>
+                    <input type="number" id="councilTax" required min="0" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="shopping">Shopping (₪)</label>
+                    <input type="number" id="shopping" required min="0" step="0.01">
+                </div>
+            </div>
+
+            <button type="submit">Calculate Available Budget</button>
+        </form>
+
+        <div id="result" style="display: none;" class="result">
+            <!-- Results will be shown here -->
+        </div>
+    </div>
+
+    <script>
+        function formatCurrency(amount) {
+            return `₪${amount.toLocaleString('he-IL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        }
+
+        document.getElementById('budgetForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Get all input elements
+            const inputs = {
+                salary: document.getElementById('salary'),
+                rent: document.getElementById('rent'),
+                electricity: document.getElementById('electricity'),
+                water: document.getElementById('water'),
+                councilTax: document.getElementById('councilTax'),
+                houseCommittee: document.getElementById('houseCommittee'),
+                shopping: document.getElementById('shopping')
+            };
+
+            // Reset any previous error states
+            Object.values(inputs).forEach(input => {
+                input.style.borderColor = '#ddd';
+            });
+
+            // Validate and collect data
+            const data = {};
+            let hasError = false;
+
+            for (const [key, input] of Object.entries(inputs)) {
+                const value = input.value.trim();
+                if (!value) {
+                    input.style.borderColor = 'red';
+                    hasError = true;
+                    continue;
+                }
+                const numValue = Number(value);
+                if (isNaN(numValue) || numValue < 0) {
+                    input.style.borderColor = 'red';
+                    hasError = true;
+                    continue;
+                }
+                data[key] = numValue;
+            }
+
+            if (hasError) {
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = `<p style="color: red;">Please fill in all fields with valid numbers (0 or greater).</p>`;
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result warning';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/calculate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                if (!response.ok) {
+                    throw new Error(result.message || 'Failed to calculate budget');
+                }
+
+                const resultDiv = document.getElementById('result');
+                
+                const resultHTML = `
+                    <h3>Budget Summary</h3>
+                    <p>Monthly Income: <span class="amount">${formatCurrency(data.salary)}</span></p>
+                    
+                    <h4>Expense Breakdown:</h4>
+                    <p>Housing (Rent + House Committee): <span class="amount">${formatCurrency(result.expenseBreakdown.housing)}</span></p>
+                    <p>Utilities (Electricity + Water): <span class="amount">${formatCurrency(result.expenseBreakdown.utilities)}</span></p>
+                    <p>Council Tax: <span class="amount">${formatCurrency(result.expenseBreakdown.taxes)}</span></p>
+                    <p>Shopping: <span class="amount">${formatCurrency(result.expenseBreakdown.shopping)}</span></p>
+                    
+                    <p>Total Fixed Expenses: <span class="amount">${formatCurrency(result.totalFixedExpenses)}</span></p>
+                    <h4>Available Money After All Expenses: <span class="amount">${formatCurrency(result.availableAfterBills)}</span></h4>
+                `;
+
+                resultDiv.innerHTML = resultHTML;
+                resultDiv.style.display = 'block';
+                resultDiv.className = `result ${result.availableAfterBills >= 0 ? 'success' : 'warning'}`;
+            } catch (error) {
+                console.error('Error:', error);
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result warning';
+            }
+        });
+    </script>
+</body>
+</html> 
