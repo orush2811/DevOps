@@ -8,8 +8,40 @@ A simple budget calculator application built with Node.js, Express, and MongoDB.
 - View running balance
 - Add and delete transactions
 - Track car payment expenses
+- Automatic savings goal calculation (20% of monthly income)
+- Smart financial recommendations
 - Simple and intuitive interface
 - Docker and Kubernetes support
+
+## How It Works
+
+The calculator helps you manage your finances by:
+- Tracking all your monthly income and expenses
+- Calculating your available balance after all expenses
+- Automatically suggesting a monthly savings goal (20% of your income)
+- Providing feedback on whether you can meet the recommended savings target
+- Breaking down expenses by category for better financial planning
+
+## Savings Calculator Feature
+
+The budget calculator includes a smart savings recommendation system:
+
+### Automatic Savings Goal
+- Calculates a recommended monthly savings target (20% of your gross income)
+- Based on the widely-used "20% savings rule" financial principle
+- Helps users maintain a healthy savings habit
+
+### Smart Feedback System
+- Compares your available money after expenses with the recommended savings goal
+- Provides visual indicators:
+  - ✅ Green success message when you can meet the savings goal
+  - ⚠️ Warning message if expenses need adjustment to meet the goal
+- Shows the exact amount you can save based on current income and expenses
+
+### Financial Health Indicators
+- Displays savings goal as a percentage of your income
+- Shows how much of your income remains after all expenses
+- Helps identify if your expenses are too high relative to your savings goals
 
 ## Prerequisites
 

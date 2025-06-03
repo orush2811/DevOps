@@ -213,6 +213,15 @@
                     <p>Car Payment: <span class="amount">${formatCurrency(result.expenseBreakdown.carPayment)}</span></p>
                     <p>Total Fixed Expenses: <span class="amount">${formatCurrency(result.totalFixedExpenses)}</span></p>
                     <h4>Available Money After All Expenses: <span class="amount">${formatCurrency(result.availableAfterBills)}</span></h4>
+                    
+                    <h4>Recommended Monthly Savings:</h4>
+                    <p>Suggested Savings Goal: <span class="amount">${formatCurrency(result.recommendedSavings)}</span></p>
+                    <p>This represents ${result.savingsPercentage.toFixed(1)}% of your monthly income</p>
+                    <p class="${result.availableAfterBills >= result.recommendedSavings ? 'success' : 'warning'}">
+                        ${result.availableAfterBills >= result.recommendedSavings 
+                            ? '✅ You can meet the recommended savings goal!' 
+                            : '⚠️ You might need to adjust your expenses to meet the recommended savings goal'}
+                    </p>
                 `;
 
                 resultDiv.innerHTML = resultHTML;

@@ -38,10 +38,16 @@ app.post('/api/calculate', (req, res) => {
 
     const totalFixedExpenses = rent + electricity + water + councilTax + houseCommittee + shopping + carPayment;
     const availableAfterBills = salary - totalFixedExpenses;
+    
+    // Calculate recommended savings (20% of income is a common financial advice)
+    const recommendedSavings = salary * 0.2;
+    const savingsPercentage = 20; // 20% of income
 
     res.json({
       totalFixedExpenses,
       availableAfterBills,
+      recommendedSavings,
+      savingsPercentage,
       expenseBreakdown: {
         housing: rent + houseCommittee,
         utilities: electricity + water,
