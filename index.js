@@ -24,18 +24,19 @@ app.post('/api/calculate', (req, res) => {
       water,
       councilTax,
       houseCommittee,
-      shopping
+      shopping,
+      carPayment
     } = req.body;
 
     // Validate all inputs
-    const inputs = { salary, rent, electricity, water, councilTax, houseCommittee, shopping };
+    const inputs = { salary, rent, electricity, water, councilTax, houseCommittee, shopping, carPayment };
     for (const [key, value] of Object.entries(inputs)) {
       if (!isValidNumber(value)) {
         throw new Error(`Invalid value for ${key}. Please enter a valid number.`);
       }
     }
 
-    const totalFixedExpenses = rent + electricity + water + councilTax + houseCommittee + shopping;
+    const totalFixedExpenses = rent + electricity + water + councilTax + houseCommittee + shopping + carPayment;
     const availableAfterBills = salary - totalFixedExpenses;
 
     res.json({
@@ -45,7 +46,8 @@ app.post('/api/calculate', (req, res) => {
         housing: rent + houseCommittee,
         utilities: electricity + water,
         taxes: councilTax,
-        shopping: shopping
+        shopping: shopping,
+        carPayment: carPayment
       }
     });
   } catch (error) {

@@ -118,6 +118,10 @@
                     <label for="shopping">Shopping (₪)</label>
                     <input type="number" id="shopping" required min="0" step="0.01">
                 </div>
+                <div class="form-group">
+                    <label for="carPayment">Car Payment (₪)</label>
+                    <input type="number" id="carPayment" required min="0" step="0.01">
+                </div>
             </div>
 
             <button type="submit">Calculate Available Budget</button>
@@ -144,7 +148,8 @@
                 water: document.getElementById('water'),
                 councilTax: document.getElementById('councilTax'),
                 houseCommittee: document.getElementById('houseCommittee'),
-                shopping: document.getElementById('shopping')
+                shopping: document.getElementById('shopping'),
+                carPayment: document.getElementById('carPayment')
             };
 
             // Reset any previous error states
@@ -205,7 +210,7 @@
                     <p>Utilities (Electricity + Water): <span class="amount">${formatCurrency(result.expenseBreakdown.utilities)}</span></p>
                     <p>Council Tax: <span class="amount">${formatCurrency(result.expenseBreakdown.taxes)}</span></p>
                     <p>Shopping: <span class="amount">${formatCurrency(result.expenseBreakdown.shopping)}</span></p>
-                    
+                    <p>Car Payment: <span class="amount">${formatCurrency(result.expenseBreakdown.carPayment)}</span></p>
                     <p>Total Fixed Expenses: <span class="amount">${formatCurrency(result.totalFixedExpenses)}</span></p>
                     <h4>Available Money After All Expenses: <span class="amount">${formatCurrency(result.availableAfterBills)}</span></h4>
                 `;

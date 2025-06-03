@@ -7,6 +7,7 @@ A simple budget calculator application built with Node.js, Express, and MongoDB.
 - Track income and expenses
 - View running balance
 - Add and delete transactions
+- Track car payment expenses
 - Simple and intuitive interface
 - Docker and Kubernetes support
 
