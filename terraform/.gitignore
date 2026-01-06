@@ -1,0 +1,33 @@
+# Local .terraform directories
+.terraform/
+
+# .tfstate files and backups
+*.tfstate
+*.tfstate.*.backup
+
+# Crash log files
+crash.log
+crash.*.log
+
+# Exclude all .tfvars files, which might contain sensitive data.
+# Keep an example file committed (e.g., `example.tfvars` without sensitive info)
+# if you need to provide a template for others.
+# *.tfvars
+# *.tfvars.json
+
+# Ignore override files as they are usually used for local testing
+# and are not intended for shared version control
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Ignore CLI configuration files
+.terraformrc
+terraform.rc
+
+# Optional: ignore plan output files (if you use terraform plan -out=tfplan)
+# *tfplan*
+
+# Optional: ignore graph output files
+# *.dot
