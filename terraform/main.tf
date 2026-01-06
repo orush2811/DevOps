@@ -5,11 +5,16 @@ terraform {
     region         = "eu-north-1"
     encrypt        = true
   }
-}
 
-module "cloudguard-network-security" {
-  source  = "CheckPointSW/cloudguard-network-security/aws"
-  version = "1.0.6"
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+      version = "6.27.0"
+    }
+  }
+}
+provider "aws"{
+  region = "eu-north-1"
 }
 
 module "front-infra-for-cg" {

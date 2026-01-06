@@ -1,0 +1,54 @@
+name: CG Pipeline for AWS deployment
+on:
+    push:
+        branches:
+            - cp-cg-aws
+
+env:
+  AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+  AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+  AWS_REGION: eu-north-1
+
+jobs:
+  deploy_and_process:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # --- STEP 1: Deploy Infrastructure (Terraform) ---
+      # This step handles Phase 1
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.14.3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+        working-directory: terraform
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -input=false
+        working-directory: terraform
+      - name: Terraform Apply
+        id: apply
+        run: terraform apply -auto-approve -input=false
+        working-directory: terraform
+        # Capture the Terraform outputs for the next step
+      - name: Get Terraform Outputs
+        id: terraform_outputs #
+        run: |
+          # Use the GITHUB_OUTPUT file to explicitly set variables for use in subsequent steps
+          TERRAFORM_OUTPUTS=$(terraform output -json)
+          
+          # Set the S3_BUCKET_NAME output
+          echo "s3_bucket_name=$(echo "$TERRAFORM_OUTPUTS" | jq -r '.s3_bucket_id.value')" >> $GITHUB_OUTPUT
