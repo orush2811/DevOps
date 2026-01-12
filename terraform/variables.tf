@@ -9,7 +9,6 @@ variable "owner_tag_value" {
   type        = string
   default     = "Or Itach" 
 }
-
 variable "bucket_name" {
   description = "Unique S3 bucket name."
   type        = string
