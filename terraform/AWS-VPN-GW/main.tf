@@ -17,8 +17,8 @@ module "vpn_gw"{
   vpc_subnet_route_table_ids   = module.vpc.private_route_table_ids
   create_vpn_connection = true
   vpn_connection_static_routes_only = true
-  vpn_connection_static_routes_destinations = ["172.30.113.0/24"]
-  local_ipv4_network_cidr = "172.30.113.0/24"
+  vpn_connection_static_routes_destinations = ["192.168.0.0/24"]
+  local_ipv4_network_cidr = "192.168.0.0/16"
   remote_ipv4_network_cidr = "10.0.0.0/16"
   tunnel1_ike_versions = ["ikev1", "ikev2"]
   tunnel1_phase1_dh_group_numbers = [14]
@@ -44,7 +44,7 @@ module "vpc" {
 
 customer_gateways = {
     IP1 = {
-      ip_address = "194.29.43.78"
+      ip_address = "20.126.198.73"
     }
   }
 
